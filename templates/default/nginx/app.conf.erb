@@ -1,0 +1,57 @@
+server {
+	<% if @params[:ssl] -%>
+		<% if node[:nginx][:listen_addresses].empty? -%>
+			listen 80;
+		<% else -%>
+			<% node[:nginx][:listen_addresses].each do |listen_address| %>
+			listen <%= listen_address %>:80;
+			<% end %>
+		<% end -%>
+	<% else -%>
+		<% if node[:nginx][:listen_addresses].empty? -%>
+			listen 443 ssl;
+		<% else -%>
+			<% node[:nginx][:listen_addresses].each do |listen_address| %>
+			listen <%= listen_address %>:443 ssl;
+			<% end %>
+		<% end -%>
+		ssl_certificate <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert;
+		ssl_certificate_key <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key;
+	<% end -%>
+	server_name <%= @params[:name] %>;
+	return 301 <%= ! @params[:ssl] ? 'http' : 'https' %>://$server_name$request_uri;
+}
+
+server {
+	<% if @params[:ssl] -%>
+		<% if node[:nginx][:listen_addresses].empty? -%>
+			listen 443 ssl;
+		<% else -%>
+			<% node[:nginx][:listen_addresses].each do |listen_address| %>
+			listen <%= listen_address %>:443 ssl;
+			<% end %>
+		<% end -%>
+		ssl_certificate <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert;
+		ssl_certificate_key <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key;
+	<% else -%>
+		<% if node[:nginx][:listen_addresses].empty? -%>
+			listen 80;
+		<% else -%>
+			<% node[:nginx][:listen_addresses].each do |listen_address| %>
+			listen <%= listen_address %>:80;
+			<% end %>
+		<% end -%>
+	<% end -%>
+
+    server_name <%= @params[:name] %>;
+    root  <%= @params[:root] || "#{node[:web][:server_root]}/#{@params[:name]}" %>;
+
+    <% if @params[:wp] -%>
+    include /etc/nginx/nginx-common-wp.conf;
+	<% end -%>
+
+	access_log /var/log/nginx/access-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log;
+	error_log /var/log/nginx/error-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log debug;
+
+    include /etc/nginx/nginx-common.conf;
+}

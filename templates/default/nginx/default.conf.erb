@@ -1,0 +1,12 @@
+server {
+	listen       443 ssl;
+    listen       80 default_server;
+    root         <%= node[:web][:default_site_dir] %>;
+    server_name  _;
+    server_name_in_redirect off;
+
+    ssl_certificate <%= node[:web][:ssl_dir] %>/default.cert;
+	ssl_certificate_key <%= node[:web][:ssl_dir] %>/default.key;
+
+	include 	/etc/nginx/nginx-common.conf;
+}

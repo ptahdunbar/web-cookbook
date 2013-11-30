@@ -1,0 +1,16 @@
+<VirtualHost *:443>
+	DocumentRoot <%= node[:web][:default_site_dir] %>
+
+	CustomLog <%= node[:apache][:log_dir] %>/access-default-ssl.log combined
+	ErrorLog <%= node[:apache][:log_dir] %>/error-default-ssl.log
+
+	SSLEngine on
+	SSLCertificateFile <%= node[:web][:ssl_dir] %>/default.cert
+	SSLCertificateKeyFile <%= node[:web][:ssl_dir] %>/default.key
+</VirtualHost>
+
+<VirtualHost *:80>
+	RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+</VirtualHost>

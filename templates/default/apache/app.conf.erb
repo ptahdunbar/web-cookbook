@@ -1,0 +1,46 @@
+<% node['apache']['listen_addresses'].each do |listen_address| %>
+<% server_port = @params[:server_port] || node['apache']['listen_ports'].first %>
+<% server_port = 443 if @params[:ssl] %>
+
+<VirtualHost <%= listen_address %>:<%= server_port %>>
+	ServerName <%= @params[:name] %>
+	DocumentRoot <%= @params[:root] || "#{node[:web][:server_root]}/#{@params[:name]}" %>
+
+	<% if @params[:server_aliases] -%>
+		ServerAlias <% @params[:server_aliases].each do |a| %><%= a %> <% end %>
+	<% end -%>
+
+	<Directory <%= @params[:root] %>>
+		Options <%= [@params[:directory_options] || "FollowSymLinks" ].flatten.join " " %>
+		AllowOverride <%= [@params[:allow_override] || "None" ].flatten.join " " %>
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	CustomLog <%= node['apache']['log_dir'] %>/access-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log combined
+	ErrorLog <%= node['apache']['log_dir'] %>/error-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log
+
+	<% if @params[:directory_index] -%>
+		DirectoryIndex <%= [@params[:directory_index]].flatten.join " " %>
+	<% end -%>
+
+	<% if @params[:ssl] -%>
+	SSLEngine on
+	SSLCertificateFile <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert
+	SSLCertificateKeyFile <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key
+	<% end -%>
+
+</VirtualHost>
+
+<VirtualHost <%= listen_address %>:<%= @params[:ssl] ? "80" : "443" %>>
+	ServerName <%= @params[:name] %>
+	Redirect permanent / <%= @params[:ssl] ? "https" : "http" %>://<%= @params[:name] %>/
+
+	<% if ! @params[:ssl] -%>
+	SSLEngine on
+	SSLCertificateFile <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert
+	SSLCertificateKeyFile <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key
+	<% end -%>
+</VirtualHost>
+
+<% end %>
