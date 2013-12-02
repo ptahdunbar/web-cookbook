@@ -16,19 +16,21 @@ define :webapp, :enable => true, :ssl => false, :template => nil, :scm => 'git',
 		action :create
 	end
 
-	case params[:scm]
-		when 'git'
-			git "#{params[:root]}" do
-				repository params[:repository]
-				reference params[:reference]
-				action :sync
-			end
-		when 'svn'
-			subversion "#{params[:root]}" do
-				repository params[:repository]
-				reference params[:reference]
-				action :sync
-			end
+	if params[:repository] and params[:reference] do
+		case params[:scm]
+			when 'git'
+				git "#{params[:root]}" do
+					repository params[:repository]
+					reference params[:reference]
+					action :sync
+				end
+			when 'svn'
+				subversion "#{params[:root]}" do
+					repository params[:repository]
+					reference params[:reference]
+					action :sync
+				end
+		end
 	end
 
 	if ::File.exists?( node[:apache][:dir] )
