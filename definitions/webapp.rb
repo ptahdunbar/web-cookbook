@@ -7,6 +7,7 @@ define :webapp, :enable => true, :ssl => false, :template => nil, :scm => 'git',
 	app_enabled = params[:enable]
 	document_root = params[:root] ? "#{node[:web][:root]}/#{params[:name]}/#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
 	generate_ssl_certs params[:name]
+	web_user = node[:apache][:user] ? node[:apache][:user] : node[:nginx][:user]
 
 	directory document_root do
 		owner params[:user] ? params[:user] : web_user
