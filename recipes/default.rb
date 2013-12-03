@@ -9,7 +9,6 @@
 
 include_recipe "git"
 include_recipe "subversion"
-include_recipe "web::vhosts"
 include_recipe "web::default_site"
 
 if node[:web][:platform]

@@ -48,3 +48,23 @@ location ~ \.php$ {
     # And get to serving the file!
     fastcgi_index  index.php;
 }
+
+location = /robots.txt {
+	access_log off; log_not_found off;
+}
+
+location = /favicon.ico {
+	access_log off; log_not_found off; expires 30d;
+}
+
+location ~ /\. {
+	access_log off; log_not_found off; deny all;
+}
+
+location ~ ~$ {
+	access_log off; log_not_found off; deny all;
+}
+
+location ~ /\.git {
+	access_log off; log_not_found off; deny all;
+}

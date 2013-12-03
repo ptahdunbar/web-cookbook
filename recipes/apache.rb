@@ -57,3 +57,9 @@ update_permissions node[:web][:root] do
 end
 
 update_user_group node[:apache][:group]
+
+include_recipe "web::_apache_vhosts"
+
+apache_site "default" do
+	enable node[:apache][:default_site_enabled]
+end

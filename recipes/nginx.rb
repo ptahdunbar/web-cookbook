@@ -34,3 +34,9 @@ update_permissions node[:web][:root] do
 end
 
 update_user_group node[:nginx][:group]
+
+include_recipe "web::_nginx_vhosts"
+
+nginx_site "default" do
+	enable node[:nginx][:default_site_enabled]
+end
