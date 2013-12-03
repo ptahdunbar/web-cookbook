@@ -8,6 +8,7 @@ define :webapp, :enable => true, :ssl => false, :template => nil, :scm => 'git',
 	document_root = params[:root] ? "#{node[:web][:root]}/#{params[:name]}/#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
 	generate_ssl_certs params[:name]
 	web_user = node[:apache][:user] ? node[:apache][:user] : node[:nginx][:user]
+	web_group = node[:apache][:group] ? node[:apache][:group] : node[:nginx][:group]
 
 	directory document_root do
 		owner params[:user] ? params[:user] : web_user
@@ -17,7 +18,7 @@ define :webapp, :enable => true, :ssl => false, :template => nil, :scm => 'git',
 		action :create
 	end
 
-	if params[:repository] and params[:reference] do
+	if params[:repository] and params[:reference]
 		case params[:scm]
 			when 'git'
 				git "#{params[:root]}" do
