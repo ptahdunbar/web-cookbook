@@ -49,7 +49,7 @@ define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => 
 	case params[:platform]
 		when 'apache'
 			template "#{node[:apache][:dir]}/sites-available/#{params[:name]}.conf" do
-				source   'apache2/app.conf.erb' unless params[:template]
+				source   'apache/app.conf.erb' unless params[:template]
 				owner    'root'
 				group    node[:apache][:group]
 				mode     '0644'
