@@ -39,10 +39,6 @@ location ~ \.php$ {
 
 	fastcgi_cache <%= node['nginx']['fastcgi_cache_keys_zone'] %>;
 	fastcgi_cache_valid any <%= node['nginx']['fastcgi_cache_valid'] %>;
-	
-	location ~ /purge(/.*) {
-	    fastcgi_cache_purge <%= node['nginx']['fastcgi_cache_keys_zone'] %> "$scheme$request_method$host$1";
-	}
 
     # Try the files specified in order. In our case, try the requested URI and if
     # that fails, try (successfully) to pass a 404 error.
