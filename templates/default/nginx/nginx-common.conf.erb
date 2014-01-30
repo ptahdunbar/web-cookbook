@@ -1,13 +1,3 @@
-set $skip_cache 0;
-    
-# POST requests and urls with a query string should always go to PHP
-if ($request_method = POST) {
-	set $skip_cache 1;
-}   
-if ($query_string != "") {
-	set $skip_cache 1;
-}
-
 location / {
     index index.html index.php;
     try_files $uri $uri/ /index.php?$args;
@@ -24,22 +14,6 @@ location ~ /\. {
 }
 
 location ~ \.php$ {
-
-	##
-	# Fastcgi cache
-	##
-	set $skip_cache 1;
-    if ($cache_uri != "null cache") {
-    	add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
-		set $skip_cache 0;
-	}
-	
-	fastcgi_cache_bypass $skip_cache;
-    fastcgi_no_cache $skip_cache;
-
-	fastcgi_cache <%= node['nginx']['fastcgi_cache_keys_zone'] %>;
-	fastcgi_cache_valid any <%= node['nginx']['fastcgi_cache_valid'] %>;
-
     # Try the files specified in order. In our case, try the requested URI and if
     # that fails, try (successfully) to pass a 404 error.
     try_files      $uri = 404;
@@ -49,12 +23,12 @@ location ~ \.php$ {
 
     # The amount of time for upstream to wait for a fastcgi process to send data.
     # We keep this *extremely* high so that one can be lazy when remote debugging.
-	fastcgi_read_timeout 3600s;
+    fastcgi_read_timeout <% node[:php][:fastcgi_read_timeout] %>;
 
     # Buffer size for reading the header of the backend FastCGI process.
     # This defaults to the value of a single fastcgi_buffers, so does not
     # need to be specified in our case, but it's good to be explicit.
-	fastcgi_buffer_size 128k;
+    fastcgi_buffer_size 128k;
 
     # The number and size of the buffers into which the reply from the FastCGI
     # process in the backend is read.
