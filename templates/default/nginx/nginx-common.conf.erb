@@ -1,3 +1,13 @@
+set $skip_cache 0;
+    
+# POST requests and urls with a query string should always go to PHP
+if ($request_method = POST) {
+	set $skip_cache 1;
+}   
+if ($query_string != "") {
+	set $skip_cache 1;
+}
+
 location / {
     index index.html index.php;
     try_files $uri $uri/ /index.php?$args;
@@ -14,9 +24,29 @@ location ~ /\. {
 }
 
 location ~ \.php$ {
+
+	##
+	# Fastcgi cache
+	##
+	set $skip_cache 1;
+    if ($cache_uri != "null cache") {
+    	add_header X-Cache-Debug "$cache_uri $cookie_nocache $arg_nocache$arg_comment $http_pragma $http_authorization";
+		set $skip_cache 0;
+	}
+	
+	fastcgi_cache_bypass $skip_cache;
+    fastcgi_no_cache $skip_cache;
+
+	fastcgi_cache <%= node['nginx']['fastcgi_cache_keys_zone'] %>;
+	fastcgi_cache_valid any <%= node['nginx']['fastcgi_cache_valid'] %>;
+	
+	location ~ /purge(/.*) {
+	    fastcgi_cache_purge <%= node['nginx']['fastcgi_cache_keys_zone'] %> "$scheme$request_method$host$1";
+	}
+
     # Try the files specified in order. In our case, try the requested URI and if
     # that fails, try (successfully) to pass a 404 error.
-    try_files      $uri =404;
+    try_files      $uri = 404;
 
     # Include the fastcgi_params defaults provided by nginx
     include        /etc/nginx/fastcgi_params;
@@ -47,6 +77,10 @@ location ~ \.php$ {
 
     # And get to serving the file!
     fastcgi_index  index.php;
+}
+
+location ~* ^.+\.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|rss|atom|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
+	access_log off;	log_not_found off; expires max;
 }
 
 location = /robots.txt {
