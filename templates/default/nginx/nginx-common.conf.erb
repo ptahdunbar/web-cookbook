@@ -23,7 +23,7 @@ location ~ \.php$ {
 
     # The amount of time for upstream to wait for a fastcgi process to send data.
     # We keep this *extremely* high so that one can be lazy when remote debugging.
-    fastcgi_read_timeout <%= node[:php][:fastcgi_read_timeout] %>;
+    fastcgi_read_timeout <%= node[:nginx][:fastcgi_read_timeout] %>;
 
     # Buffer size for reading the header of the backend FastCGI process.
     # This defaults to the value of a single fastcgi_buffers, so does not
