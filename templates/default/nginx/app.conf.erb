@@ -46,8 +46,8 @@ server {
     server_name <%= @params[:name] %>;
     root  <%= @params[:root] %>;
 
-	access_log /var/log/nginx/access-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log;
-	#error_log /var/log/nginx/error-<%= @params[:name] %><%= @params[:ssl] ? "-ssl" : "" %>.log debug;
+	access_log /var/log/nginx/access_<%= @params[:ssl] ? "ssl_" : "" %><%= @params[:name] %>.log;
+	error_log /var/log/nginx/error_<%= @params[:ssl] ? "ssl_" : "" %><%= @params[:name] %>.log warn;
 
     include /etc/nginx/nginx-common.conf;
     include /etc/nginx/nginx-common-wp.conf;
