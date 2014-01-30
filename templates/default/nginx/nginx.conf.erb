@@ -76,10 +76,6 @@ http {
   open_file_cache_valid    <%= node['nginx']['open_file_cache_valid'] %>; 
   open_file_cache_min_uses <%= node['nginx']['open_file_cache_min_uses'] %>;
   open_file_cache_errors   <%= node['nginx']['open_file_cache_errors'] %>;
-  
-  fastcgi_cache_path <%= node['nginx']['fastcgi_cache_path'] %> levels=1:2 keys_zone=<%= node['nginx']['fastcgi_cache_keys_zone'] %>:100m  max_size=<%= node['nginx']['fastcgi_cache_keys_max_size'] %> inactive=60m;
-  fastcgi_cache_key "<%= node['nginx']['fastcgi_cache_keys_zone'] %>";
-  fastcgi_cache_use_stale error timeout invalid_header http_500;
 
   <% if node['nginx']['enable_rate_limiting'] -%>
   limit_req_zone $binary_remote_addr zone=<%= node['nginx']['rate_limiting_zone_name'] %>:<%= node['nginx']['rate_limiting_backoff'] %> rate=<%= node['nginx']['rate_limit'] %>;
