@@ -4,8 +4,8 @@ directory node[:web][:default_site_dir] do
 	recursive true
 end
 
-remote_file "#{node[:web][:default_site_dir]}/pirate.gif" do
-	source 'http://www.nyan.cat/cats/pirate.gif'
+cookbook_file "#{node[:web][:default_site_dir]}/pirate.gif" do
+	source 'pirate.gif'
 end
 
 template "#{node[:web][:default_site_dir]}/index.html" do

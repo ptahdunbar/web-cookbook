@@ -8,7 +8,7 @@ define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => 
 	return if ! params[:platform]
 
 	app_enabled = params[:enabled]
-	params[:root] = params[:root] ? "#{node[:web][:root]}/#{params[:name]}/#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
+	params[:root] = params[:root] ? "#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
 	generate_ssl_certs params[:name]
 
 	case params[:platform]

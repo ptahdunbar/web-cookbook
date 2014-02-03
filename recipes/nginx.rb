@@ -1,6 +1,8 @@
 
 include_recipe "nginx"
 
+node.set[:web][:platform] = 'nginx'
+
 %w[nginx.conf nginx-common.conf nginx-common-wp.conf].each do |conf|
 	template "#{node['nginx']['dir']}/#{conf}" do
 		source "nginx/#{conf}.erb"

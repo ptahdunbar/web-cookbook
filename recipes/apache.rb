@@ -10,6 +10,8 @@ include_recipe 'apache2::mod_fastcgi'
 include_recipe 'apache2::mod_rewrite'
 include_recipe 'apache2::mod_ssl'
 
+node.set[:web][:platform] = 'apache'
+
 directory node[:web][:root] do
 	owner node[:apache][:user]
 	group node[:apache][:group]
