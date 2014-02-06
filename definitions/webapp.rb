@@ -22,7 +22,6 @@ define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => 
 
 
 	directory params[:root] do
-		owner params[:user] ? params[:user] : web_user
 		group web_group
 		mode '0775'
 		recursive true
