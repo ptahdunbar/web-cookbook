@@ -1,4 +1,3 @@
-
 include_recipe "nginx"
 
 node.set[:web][:platform] = 'nginx'
@@ -29,6 +28,7 @@ end
 
 template "#{node[:nginx][:dir]}/sites-available/default" do
 	source 'nginx/default.conf.erb'
+	cookbook "web"
 end
 
 update_permissions node[:web][:root] do
