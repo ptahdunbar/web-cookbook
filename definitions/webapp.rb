@@ -11,8 +11,8 @@ define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => 
 	params[:root] = params[:root] ? "#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
 	generate_ssl_certs params[:name]
 	
-	params[:ssl_certificate] = params[:ssl_certificate] ? params[:ssl_certificate] : node[:web][:ssl_dir] . '/default.cert'
-	params[:ssl_certificate_key] = params[:ssl_certificate_key] ? params[:ssl_certificate_key] : node[:web][:ssl_dir] . '/default.key'
+	params[:ssl_certificate] = params[:ssl_certificate] ? params[:ssl_certificate] : node[:web][:ssl_dir] + params[:name] + '.cert' 
+	params[:ssl_certificate_key] = params[:ssl_certificate_key] ? params[:ssl_certificate_key] : node[:web][:ssl_dir] + params[:name] + '.key'
 
 	case params[:platform]
 		when 'apache'
