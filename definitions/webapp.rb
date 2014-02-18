@@ -3,13 +3,16 @@
 # Definition:: webapp
 #
 
-define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => nil, :scm => 'git', :repository => nil, :reference => nil, :root => nil do
+define :webapp, :platform => nil, :enabled => true, :ssl => false, :template => nil, :scm => 'git', :repository => nil, :reference => nil, :root => nil, :ssl_certificate => nil, :ssl_certificate_key => nil do
 
 	return if ! params[:platform]
 
 	app_enabled = params[:enabled]
 	params[:root] = params[:root] ? "#{params[:root]}" : "#{node[:web][:root]}/#{params[:name]}"
 	generate_ssl_certs params[:name]
+	
+	params[:ssl_certificate] = params[:ssl_certificate] ? params[:ssl_certificate] : node[:web][:ssl_dir] . '/default.cert'
+	params[:ssl_certificate_key] = params[:ssl_certificate_key] ? params[:ssl_certificate_key] : node[:web][:ssl_dir] . '/default.key'
 
 	case params[:platform]
 		when 'apache'
