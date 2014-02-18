@@ -15,8 +15,8 @@ server {
 			listen <%= listen_address %>:443 ssl;
 			<% end %>
 		<% end -%>
-		ssl_certificate <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert;
-		ssl_certificate_key <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key;
+		ssl_certificate <%= @params[:ssl_certificate] %>;
+		ssl_certificate_key <%= @params[:ssl_certificate_key] %>;
 	<% end -%>
 	server_name <%= @params[:name] %>;
 	return 301 <%= ! @params[:ssl] ? 'http' : 'https' %>://$server_name$request_uri;
@@ -31,8 +31,8 @@ server {
 			listen <%= listen_address %>:443 ssl;
 			<% end %>
 		<% end -%>
-		ssl_certificate <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.cert;
-		ssl_certificate_key <%= node[:web][:ssl_dir] %>/<%= @params[:name] %>.key;
+		ssl_certificate <%= @params[:ssl_certificate] %>;
+		ssl_certificate_key <%= @params[:ssl_certificate_key] %>;
 	<% else -%>
 		<% if node[:nginx][:listen_addresses].empty? -%>
 			listen 80;
